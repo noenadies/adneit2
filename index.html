@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gio</title>
+  <script src="./js/jquery.min.js"></script>
+
+  <!-- Babylon.js -->
+  <script src="./js/dat.gui.min.js"></script>
+  <script src="./js/Assets.js"></script>
+  <script src="./js/recast.js"></script>
+  <script src="./js/ammo.js"></script>
+  <script src="./js/HavokPhysics_umd.js"></script>
+  <script src="./js/cannon.js"></script>
+  <script src="./js/Oimo.js"></script>
+  <script src="./js/earcut.min.js"></script>
+  <script src="./js/babylon.js"></script>
+  <script src="./js/babylonjs.materials.min.js"></script>
+  <script src="./js/babylonjs.proceduralTextures.min.js"></script>
+  <script src="./js/babylonjs.postProcess.min.js"></script>
+  <script src="./js/babylonjs.loaders.js"></script>
+  <script src="./js/babylonjs.serializers.min.js"></script>
+  <script src="./js/babylon.gui.min.js"></script>
+  <script src="./js/babylon.inspector.bundle.js"></script>
+
+  <style>
+    html,
+    body {
+      overflow: hidden;
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      background-color: blue;
+    }
+
+    #renderCanvas {
+      width: 100%;
+      height: 100%;
+      /* touch-action: none; */
+      z-index: 0;
+    }
+
+    #canvasZone {
+      width: 100%;
+      height: 100%;
+      z-index: -2;
+    }
+
+
+
+    #idtodo {
+      position: absolute;
+      width: 100vw;
+      height: 100vh;
+      background-color: black;
+      z-index: 1;
+    }
+
+    #idapp {
+      position: absolute;
+      width: 100vw;
+      height: 100vh;
+      background-color: rgb(12, 157, 48);
+      z-index: 11;
+    }
+
+    .sale {
+      animation-name: asale;
+      animation-duration: 1s;
+      animation-timing-function: linear;
+      animation-delay: 0s;
+      animation-iteration-count: 1;
+      animation-direction: normal;
+      animation-fill-mode: none;
+    }
+
+    @keyframes asale {
+
+      0% {
+
+        filter: blur(12px);
+        opacity: 1;
+      }
+
+      100% {
+        filter: blur(0);
+        opacity: 0;
+      }
+    }
+
+    #idcelularBt {
+      /*   position: absolute;
+      top: 10%;
+      left: 20%; */
+      width: 40px;
+      height: 40px;
+      background-color: rgba(255, 255, 255, 0);
+      display: flex;
+      flex-direction: row;
+      flex-wrap: nowrap;
+      justify-content: center;
+      align-items: center;
+      align-content: center;
+      z-index: 11;
+    }
+
+    .circulo {
+      border-radius: 35px;
+      border: 3px solid #ffffff;
+    }
+
+    #idpc {
+      /*   position: absolute;
+      top: 10%;
+      right: 20%; */
+      width: 40px;
+      height: 40px;
+      background-color: rgba(255, 255, 255, 0);
+      display: flex;
+      flex-direction: row;
+      flex-wrap: nowrap;
+      justify-content: center;
+      align-items: center;
+      align-content: center;
+      z-index: 11;
+    }
+
+    #divmenu {
+
+      position: absolute;
+      top: 50%;
+      right: 0%;
+      -ms-transform: translate(-50%, -50%);
+      transform: translate(-50%, -50%);
+      width: 40px;
+      height: 350px;
+      background-color: rgba(81, 180, 216, 0.181);
+      z-index: 12;
+      display: grid;
+      grid-template-columns: 1fr;
+      grid-template-rows: repeat(5, 1fr);
+      grid-column-gap: 0px;
+      grid-row-gap: 13px;
+      justify-items: center;
+      align-items: center;
+    }
+
+    #idbtmenudR {
+
+      position: absolute;
+      top: 5%;
+      right: 25%;
+
+      z-index: 13;
+    }
+
+
+    .sidenav {
+      height: 100%;
+      width: 0;
+      position: absolute;
+
+      top: 0;
+      left: 0;
+      background-color: #1111117c;
+      overflow-x: hidden;
+      transition: 0.5s;
+      padding-top: 60px;
+      z-index: 19;
+    }
+
+    .sidenav a {
+      padding: 8px 8px 8px 32px;
+      text-decoration: none;
+      font-size: 25px;
+      color: #ffffff;
+      display: block;
+      transition: 0.3s;
+    }
+
+    .sidenav a:hover {
+      color: #3a7afb;
+    }
+
+    .sidenav .closebtn {
+      position: absolute;
+      top: 0;
+      right: 25px;
+      font-size: 36px;
+      margin-left: 50px;
+    }
+
+    @media screen and (max-height: 450px) {
+      .sidenav {
+        padding-top: 15px;
+      }
+
+      .sidenav a {
+        font-size: 18px;
+      }
+    }
+
+    #panelobjetos {
+      position: absolute;
+      top: 54%;
+      left: 50%;
+      -ms-transform: translate(-50%, -50%);
+      transform: translate(-50%, -50%);
+      width: 100%;
+      height: 80%;
+      background-color: rgba(255, 255, 255, 0);
+      z-index: 14;
+
+    }
+
+    #idcerrrarpanel {
+      position: absolute;
+      top: 5%;
+      right: 14%;
+      border-radius: 30%;
+      width: 37px;
+      height: 37px;
+      background-color: #111;
+      color: rgb(255, 255, 255);
+      display: flex;
+      flex-direction: row;
+      flex-wrap: nowrap;
+      justify-content: space-around;
+      align-items: center;
+      align-content: center;
+      font-size: 18px;
+    }
+
+    #idelement {
+      position: absolute;
+      top: 90px;
+      right: 0%;
+      width: 100%;
+      height: 100%;
+      background-color: #ffffff00;
+      overflow-y: scroll;
+    }
+
+    .clgridautp {
+      display: grid;
+      gap: 1rem;
+      grid-auto-rows: 15rem;
+      grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
+      position: absolute;
+      top: 0px;
+      left: 0px;
+      width: 100%;
+      height: 100%;
+      background-color: #00000093;
+    }
+
+    .boxitems {
+      position: relative;
+      top: 0%;
+      left: 0%;
+      height: 100%;
+      width: 100%;
+      background-color: rgba(173, 173, 173, 0.833);
+    }
+
+    .cllabels {
+      position: absolute;
+      top: 10%;
+      left: 0%;
+      width: 10%;
+      height: 80%;
+      background-color: #c9b03200;
+    }
+
+    .imgscl {
+      position: absolute;
+      top: 0%;
+      left: 13%;
+      width: 70%;
+      height: 50%;
+      background-color: #74969c00;
+      display: flex;
+      flex-direction: row;
+      flex-wrap: nowrap;
+      justify-content: center;
+      align-items: center;
+      align-content: center;
+    }
+
+    .clinfo {
+      position: absolute;
+      top: 50%;
+      left: 13%;
+      width: 70%;
+      height: 50%;
+      background-color: #49953600;
+      display: flex;
+      flex-direction: row;
+      flex-wrap: nowrap;
+      justify-content: center;
+      align-items: center;
+      align-content: center;
+    }
+
+    .cllabelDr {
+      position: absolute;
+      top: 10%;
+      left: 85%;
+      width: 15%;
+      height: 80%;
+      background-color: #00000000;
+      z-index: 12;
+    }
+
+    .climagenes {
+
+      width: 90%;
+      height: 86%;
+      background-color: #6cd08500;
+
+    }
+
+    #fondpu {
+      position: absolute;
+      top: 0%;
+      left: 0%;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(255, 255, 255, 0.747);
+      z-index: -12;
+    }
+    .textuni{
+      position: absolute;
+      top: 0%;
+      left: 20%;
+      width: 25%;
+      height:44px;
+      font: optional;
+      font-size: 33px;
+      color: #111;
+      display: flex;
+      flex-direction: row;
+      flex-wrap: nowrap;
+      justify-content: center;
+      align-items: center;
+      align-content: center;
+    }
+    .textuni3{
+      position: absolute;
+      bottom:  0%;
+      left: 20%;
+      width: 25%;
+      height:44px;
+      font: optional;
+      font-size: 16px;
+      color: #111;
+      display: flex;
+      flex-direction: row;
+      flex-wrap: nowrap;
+      justify-content: center;
+      align-items: center;
+      align-content: center;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div id="idtodo">
+    <h1 class="textuni">Ecomerce</h1>
+    <h3 class="textuni3">Acercate al futuro</h3>
+    <img id="fondpu"
+      src="https://www.google.com/imgres?imgurl=https%3A%2F%2Fimg.freepik.com%2Fvector-premium%2Fdiseno-pantalla-futurista-digital-vr-hud-tecnologia-realidad-virtual-scifi-ver-pantalla-frontal_502272-10.jpg&tbnid=Ic4Xwda4fbGcBM&vet=12ahUKEwj6-tOVspyAAxWrjrAFHTwUBtUQxiAoBnoECAAQIA..i&imgrefurl=https%3A%2F%2Fwww.freepik.es%2Fvector-premium%2Fdiseno-pantalla-futurista-digital-vr-hud-tecnologia-realidad-virtual-scifi-ver-pantalla-frontal_16827844.htm&docid=H8cOf6kduJIBNM&w=626&h=376&itg=1&q=pantalla%20futurista&hl=es-419&ved=2ahUKEwj6-tOVspyAAxWrjrAFHTwUBtUQxiAoBnoECAAQIA"
+      alt="">
+    <div class="clrender"></div>
+    <div id="canvasZone"><canvas id="renderCanvas"></canvas></div>
+    <script>
+      var canvas = document.getElementById("renderCanvas");
+
+      var startRenderLoop = function (engine, canvas) {
+        engine.runRenderLoop(function () {
+          if (sceneToRender && sceneToRender.activeCamera) {
+            sceneToRender.render();
+          }
+        });
+      }
+
+      var engine = null;
+      var scene = null;
+      var sceneToRender = null;
+      var createDefaultEngine = function () { return new BABYLON.Engine(canvas, true, { preserveDrawingBuffer: true, stencil: true, disableWebGL2Support: false }); };
+      var createScene = function () {
+       
+        var scene = new BABYLON.Scene(engine);
+        var camera = new BABYLON.ArcRotateCamera(
+          "camera1",
+          0,
+          Math.PI / 2,
+          5,
+          BABYLON.Vector3.Zero(),
+          scene
+        );
+        camera.lowerRadiusLimit = 4;
+        camera.upperRadiusLimit = 6;
+        camera.attachControl(canvas, true);
+
+        BABYLON.SceneLoader.Append("./", "obj.glb", scene, function (scene) {
+       
+          //scene.createDefaultCameraOrLight(true, true, true);
+
+        
+        });
+
+        var gl = new BABYLON.GlowLayer("glow", scene, {
+          mainTextureFixedSize: 256,
+          blurKernelSize: 64
+        });
+
+        //   var gl = new BABYLON.GlowLayer("glow", scene);
+        scene.clearColor = new BABYLON.Color4(0, 0, 0, 0);
+
+        gl.intensity = 1;
+        return scene;
+      }
+      window.initFunction = async function () {
+
+
+
+        var asyncEngineCreation = async function () {
+          try {
+            return createDefaultEngine();
+          } catch (e) {
+            console.log("the available createEngine function failed. Creating the default engine instead");
+            return createDefaultEngine();
+          }
+        }
+
+        window.engine = await asyncEngineCreation();
+        if (!engine) throw 'engine should not be null.';
+        startRenderLoop(engine, canvas);
+        window.scene = createScene();
+      };
+      initFunction().then(() => {
+        sceneToRender = scene
+      });
+
+      // Resize
+      window.addEventListener("resize", function () {
+        engine.resize();
+      });
+
+      function zindexcanvasrender() {
+        document.getElementById('renderCanvas').style.zIndex = "-1"
+      }
+    </script>
+
+
+
+  </div>
+  <!--   <div id="idapp2"><button>okkkk</button>
+    <div id="idcelularBt">
+      <svg xmlns="http://www.w3.org/2000/svg" width="70" height="70" fill="currentColor" class="bi bi-phone"
+        viewBox="0 0 16 16" id="IconChangeColor">
+        <path
+          d="M11 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h6zM5 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H5z"
+          id="mainIconPathAttribute" fill="#ffffff"></path>
+        <path d="M8 14a1 1 0 1 0 0-2 1 1 0 0 0 0 2z" id="mainIconPathAttribute" fill="#ffffff"></path>
+      </svg>
+    </div>
+ -->
+
+  <!--     <svg width="200" height="200" viewBox="0 0 40 60" onclick="alert('gio')">
+      <polygon class="triangle" fill="none" stroke="#fff" stroke-width="1" points="16, 1, 32, 32 1, 32"></polygon>
+      <text class="text" x="0" y="45" fill="#fff">Loading..</text>
+    </svg>
+   -->
+  </div>
+
+  <div id="mySidenav" class="sidenav">
+    <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+    <a id="idCelA" onclick="fopenpanel(this)">Celulares</a>
+    <a id="idcomA" onclick="fopenpanel(this)">Computadores</a>
+    <a id="idtevlA" onclick="fopenpanel(this)">Televisores</a>
+    <a id="idcontactA" onclick="fopenpanel(this)">Contact</a>
+  </div>
+
+  <h2>Animated Sidenav Example</h2>
+  <p>Click on the element below to open the side navigation menu.</p>
+  <span style="font-size:30px;cursor:pointer" onclick="openNav()">&#9776; open</span>
+
+  <script>
+    function openNav() {
+      document.getElementById("mySidenav").style.width = "250px";
+      fcerrrarpanel()
+    }
+
+    function closeNav() {
+      document.getElementById("mySidenav").style.width = "0";
+    }
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+  <div id="idbtmenudR" onclick="openNav()" ondblclick="fcerrrarpanel()">
+    <svg xmlns="http://www.w3.org/2000/svg" width="41" height="41" fill="currentColor" class="bi bi-view-list"
+      viewBox="0 0 16 16" id="IconChangeColor" transform="rotate(90)">
+      <path
+        d="M3 4.5h10a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2zm0 1a1 1 0 0 0-1 1v3a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1v-3a1 1 0 0 0-1-1H3zM1 2a.5.5 0 0 1 .5-.5h13a.5.5 0 0 1 0 1h-13A.5.5 0 0 1 1 2zm0 12a.5.5 0 0 1 .5-.5h13a.5.5 0 0 1 0 1h-13A.5.5 0 0 1 1 14z"
+        id="mainIconPathAttribute" fill="#0a80ff"></path>
+    </svg>
+  </div>
+  <div id="divmenu">
+
+
+    <div id="idcelularBt" class="circulo2" onclick="fopenpanel(this)">
+      <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="currentColor" class="bi bi-phone"
+        viewBox="0 0 16 16" id="IconChangeColor">
+        <path
+          d="M11 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h6zM5 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H5z"
+          id="mainIconPathAttribute" fill="#ffffff"></path>
+        <path d="M8 14a1 1 0 1 0 0-2 1 1 0 0 0 0 2z" id="mainIconPathAttribute" fill="#ffffff"></path>
+      </svg>
+    </div>
+    <div id="idpc" onclick="fopenpanel(this)">
+      <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="currentColor"
+        class="bi bi-pc-display-horizontal" viewBox="0 0 16 16" id="IconChangeColor">
+        <path
+          d="M1.5 0A1.5 1.5 0 0 0 0 1.5v7A1.5 1.5 0 0 0 1.5 10H6v1H1a1 1 0 0 0-1 1v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3a1 1 0 0 0-1-1h-5v-1h4.5A1.5 1.5 0 0 0 16 8.5v-7A1.5 1.5 0 0 0 14.5 0h-13Zm0 1h13a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-.5.5h-13a.5.5 0 0 1-.5-.5v-7a.5.5 0 0 1 .5-.5ZM12 12.5a.5.5 0 1 1 1 0 .5.5 0 0 1-1 0Zm2 0a.5.5 0 1 1 1 0 .5.5 0 0 1-1 0ZM1.5 12h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1 0-1ZM1 14.25a.25.25 0 0 1 .25-.25h5.5a.25.25 0 1 1 0 .5h-5.5a.25.25 0 0 1-.25-.25Z"
+          id="mainIconPathAttribute" fill="#ffffff"></path>
+      </svg>
+    </div>
+  </div> <!-- finmenu -->
+
+
+
+
+
+  <div id="panelobjetos">
+    <div id="idcerrrarpanel" onclick="fcerrrarpanel()">X</div>
+    <div id="idelement">
+
+      <div class="boxitems">
+        <div class="cllabels"></div>
+        <div class="imgscl"><img class="climagenes"
+            src="https://www.hp.com/content/dam/sites/worldwide/personal-computers/consumer/gaming/laptops/2021-victus-16-1-intel/Victus_16_Front_hero_banner_desktop.png">
+        </div>
+        <div class="cllabelDr"></div>
+        <div class="clinfo">
+          Imagen 3 de 3 de Laptop gamer Asus TUF Gaming A15 FA507RE jaeger gray 15.6", AMD Ryzen 7 6800H 16GB de RAM
+          512GB SSD, NVIDIA GeForce RTX 3050 Ti 144 Hz 1920x1080px Windows 11 Home Nuevo | +50 vendidos Laptop gamer
+          Asus TUF Gaming A15 FA507RE jaeger gray 15.6", AMD Ryzen 7 6800H 16GB de RAM 512GB SSD, NVIDIA GeForce RTX
+          3050 Ti 144 Hz 1920x1080px Windows 11 Home
+        </div>
+      </div>
+
+      <div class="boxitems">
+        <div class="cllabels"></div>
+        <div class="imgscl"><img class="climagenes"
+            src="https://www.hp.com/content/dam/sites/worldwide/personal-computers/consumer/gaming/laptops/2021-victus-16-1-intel/Victus_16_Front_hero_banner_desktop.png">
+        </div>
+        <div class="cllabelDr"></div>
+        <div class="clinfo"></div>
+      </div>
+
+      <div class="boxitems">
+        <div class="cllabels"></div>
+        <div class="imgscl"><img class="climagenes"
+            src="https://www.hp.com/content/dam/sites/worldwide/personal-computers/consumer/gaming/laptops/2021-victus-16-1-intel/Victus_16_Front_hero_banner_desktop.png">
+        </div>
+        <div class="cllabelDr"></div>
+        <div class="clinfo"></div>
+      </div>
+
+      <div class="boxitems">
+        <div class="cllabels"></div>
+        <div class="imgscl"><img class="climagenes"
+            src="https://www.hp.com/content/dam/sites/worldwide/personal-computers/consumer/gaming/laptops/2021-victus-16-1-intel/Victus_16_Front_hero_banner_desktop.png">
+        </div>
+        <div class="cllabelDr"></div>
+        <div class="clinfo"></div>
+      </div>
+
+      <div class="boxitems">
+        <div class="cllabels"></div>
+        <div class="imgscl"><img class="climagenes"
+            src="https://www.hp.com/content/dam/sites/worldwide/personal-computers/consumer/gaming/laptops/2021-victus-16-1-intel/Victus_16_Front_hero_banner_desktop.png">
+        </div>
+        <div class="cllabelDr"></div>
+        <div class="clinfo"></div>
+      </div>
+    </div>
+  </div>
+
+
+  <script>
+  var _0x353758=_0x17fe;(function(_0x456e9f,_0x4ba502){var _0x44bebd=_0x17fe,_0x8279af=_0x456e9f();while(!![]){try{var _0x1787af=parseInt(_0x44bebd(0x1ab))/0x1*(-parseInt(_0x44bebd(0x1c9))/0x2)+parseInt(_0x44bebd(0x1a6))/0x3*(-parseInt(_0x44bebd(0x1a8))/0x4)+parseInt(_0x44bebd(0x1c3))/0x5+-parseInt(_0x44bebd(0x1c0))/0x6*(parseInt(_0x44bebd(0x1b0))/0x7)+-parseInt(_0x44bebd(0x1ce))/0x8*(-parseInt(_0x44bebd(0x1d0))/0x9)+parseInt(_0x44bebd(0x1ad))/0xa+parseInt(_0x44bebd(0x1c6))/0xb;if(_0x1787af===_0x4ba502)break;else _0x8279af['push'](_0x8279af['shift']());}catch(_0x70017a){_0x8279af['push'](_0x8279af['shift']());}}}(_0x345f,0xd57c3));var global={'ancho':window['innerWidth'],'alto':window[_0x353758(0x1bc)]};function pantalla(){var _0xbb8bf7=_0x353758;global['ancho']>0x2bc&&(document['getElementById']('idcelularBt')['style']['display']=_0xbb8bf7(0x1b5));}function _0x345f(){var _0xda6969=['innerHeight','></div>','#000000','#ffffff','111036UhbPIj','getElementById','key','5514465yxWrxY','#7c9c74','removeClass','18197157FULCTt','entr','50%','6YbHJhI','onload','idelement','relative','70%','8XNolLh','zIndex','10851741UqfhYW','innerWidth','grid','panelobjetos','0px','none',',\x201fr))','15%','keyup','3ySenfx','append','6364396UWjvPj','1rem','style','547142YqBPoO','25%','3475970ajjLeG','log','css','77QDntVb','sale','22rem','33rem','100%','flex','addEventListener','<div\x20id=','#idelement','toString','idapp','absolute'];_0x345f=function(){return _0xda6969;};return _0x345f();}function anade(){}window[_0x353758(0x1ca)]=function iniciA(){var _0xf21333=_0x353758;global={'ancho':window[_0xf21333(0x1d1)],'alto':window['innerHeight']},pantalla(),arreglagrid(_0xf21333(0x1cb));},window[_0x353758(0x1b6)](_0x353758(0x1a5),_0x45e2bb=>{var _0x5b6de2=_0x353758;_0x45e2bb[_0x5b6de2(0x1c2)]=='q'&&addTRemoveGio(_0x5b6de2(0x1ba),_0x5b6de2(0x1b1)),_0x45e2bb[_0x5b6de2(0x1c2)]=='w'&&(document['getElementById']('idapp')[_0x5b6de2(0x1aa)][_0x5b6de2(0x1cf)]='11',addclassGio('idapp','sale'),setTimeout(()=>{var _0x4f0bda=_0x5b6de2;document['getElementById'](_0x4f0bda(0x1ba))[_0x4f0bda(0x1aa)][_0x4f0bda(0x1cf)]='-1',addTRemoveGio(_0x4f0bda(0x1ba),_0x4f0bda(0x1b1));},0x3e8));});function _0x17fe(_0x1a5f26,_0x3d1d18){var _0x345f46=_0x345f();return _0x17fe=function(_0x17feeb,_0x459cd5){_0x17feeb=_0x17feeb-0x19f;var _0x47b972=_0x345f46[_0x17feeb];return _0x47b972;},_0x17fe(_0x1a5f26,_0x3d1d18);}function addclassGio(_0xf02521,_0x57d7af){$('#'+_0xf02521)['addClass'](_0x57d7af);}function addTRemoveGio(_0x2df05e,_0x5ae480){var _0x1db0de=_0x353758;$('#'+_0x2df05e)[_0x1db0de(0x1c5)](_0x5ae480);}function fcerrrarpanel(){var _0x34079a=_0x353758;document[_0x34079a(0x1c1)](_0x34079a(0x1a0))['style']['display']=_0x34079a(0x1a2);}function fopenpanel(_0x5571fc){var _0x1880d2=_0x353758;closeNav(),document['getElementById'](_0x1880d2(0x1a0))[_0x1880d2(0x1aa)]['display']='grid';}function arreglagrid(_0x4aff51){var _0x481c6c=_0x353758,_0x487614=window[_0x481c6c(0x1d1)],_0x281119=_0x481c6c(0x1b2);window['innerWidth']<0x1f4&&(_0x281119=window['innerWidth'][_0x481c6c(0x1b9)]()+'px');var _0x481f7e='minmax('+_0x281119+_0x481c6c(0x1a3);_0x481f7e=_0x481f7e['toString']();var _0x449a76={'position':'absolute','top':_0x481c6c(0x1a1),'left':_0x481c6c(0x1a1),'width':'100%','height':_0x481c6c(0x1b4),'display':_0x481c6c(0x19f),'gap':_0x481c6c(0x1a9),'grid-auto-rows':_0x481c6c(0x1b3),'grid-template-columns':'repeat(auto-fill,'+_0x481f7e};$('#idelement')[_0x481c6c(0x1af)](_0x449a76),console[_0x481c6c(0x1ae)](document[_0x481c6c(0x1c1)](_0x4aff51));}function additemsalpanel(){var _0x25ce41=_0x353758,_0x1cd9f7=window[_0x25ce41(0x1d1)],_0xcd7573=window[_0x25ce41(0x1bc)],_0x3a8a94={'position':_0x25ce41(0x1bb),'top':_0x25ce41(0x1ac),'left':'0%','width':_0x25ce41(0x1a4),'height':_0x25ce41(0x1c8),'background-color':_0x25ce41(0x1be)},_0xffd3e0={'position':_0x25ce41(0x1bb),'top':'0%','left':_0x25ce41(0x1a4),'width':_0x25ce41(0x1cd),'height':_0x25ce41(0x1c8),'background-color':_0x25ce41(0x1c4)},_0x174a92={'position':_0x25ce41(0x1bb),'top':(_0x1cd9f7*0.8)[_0x25ce41(0x1b9)]()+'px','left':(_0x1cd9f7*0.1)['toString']()+'px','width':(_0x1cd9f7*0.8)[_0x25ce41(0x1b9)]()+'px','height':(_0xcd7573*0.3)[_0x25ce41(0x1b9)]()+'px','background-color':'#7c9c70'},_0x57202a={'position':_0x25ce41(0x1bb),'top':(_0x1cd9f7*0.2)['toString']()+'px','left':(_0x1cd9f7*0.9)['toString']()+'px','width':(_0x1cd9f7*0.1)[_0x25ce41(0x1b9)]()+'px','height':(_0xcd7573*0.6)[_0x25ce41(0x1b9)]()+'px','background-color':'#7c9c70'},_0x198edd={'position':_0x25ce41(0x1cc),'top':'0%','left':'0%','width':_0x25ce41(0x1b4),'height':_0x25ce41(0x1b4),'background-color':_0x25ce41(0x1bf)},_0x2bc97f='idelementsi',_0x44c02d=_0x25ce41(0x1b7)+_0x2bc97f+_0x25ce41(0x1bd),_0x33f629='ideleInternxx';console['log'](_0x25ce41(0x1c7));for(var _0x1c5383=0x0;_0x1c5383<0x16;_0x1c5383=_0x1c5383+0x1){console[_0x25ce41(0x1ae)](_0x1c5383);var _0x15c188=_0x2bc97f+_0x1c5383[_0x25ce41(0x1b9)](),_0x4a69be=_0x25ce41(0x1b7)+_0x15c188+_0x25ce41(0x1bd);$(_0x25ce41(0x1b8))[_0x25ce41(0x1a7)](_0x4a69be),$('#'+_0x15c188)['css'](_0x198edd);for(var _0xa29626=0x0;_0xa29626<0x4;_0xa29626=_0xa29626+0x1){var _0x3921f3=_0x15c188+_0xa29626['toString'](),_0x5babbe=_0x25ce41(0x1b7)+_0x3921f3+_0x25ce41(0x1bd);_0xa29626==0x0&&($('#'+_0x15c188)[_0x25ce41(0x1a7)](_0x5babbe),$('#'+_0x3921f3)[_0x25ce41(0x1af)](_0x3a8a94)),_0xa29626==0x1&&($('#'+_0x15c188)[_0x25ce41(0x1a7)](_0x5babbe),$('#'+_0x3921f3)[_0x25ce41(0x1af)](_0xffd3e0));}}}
+  </script>
+
+</body>
+
+</html>
